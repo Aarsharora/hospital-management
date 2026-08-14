@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Global Hospitals — Patient Dashboard</title>
+  <link rel="stylesheet" href="hms-modern.css">
+  <link rel="stylesheet" href="vendor/fontawesome/css/font-awesome.min.css">
+  <style>
+    .med-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:1.25rem}
+    .med-card{border:1px solid #e2e8f0;border-radius:12px;padding:1.25rem;background:#fafafa;transition:all .25s;cursor:default}
+    .med-card:hover{border-color:#7c3aed;background:white;transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,.1)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:.85rem}
+    .form-label{font-size:.83rem;font-weight:600;color:var(--text-muted);margin-bottom:.3rem;display:block}
+    .form-inp{width:100%;border:1px solid #e2e8f0;border-radius:var(--radius-md);padding:.6rem .85rem;font-family:'Inter',sans-serif;font-size:.875rem;color:var(--text-dark);background:#f8fafc;outline:none;transition:border-color .2s}
+    .form-inp:focus{border-color:var(--primary-light);background:white;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+  </style>
+</head>
+<body>
+
+<nav class="hms-navbar">
+  <a href="index.html" class="brand"><div class="brand-icon"><i class="fa fa-heartbeat"></i></div>Global Hospitals</a>
+  <div class="nav-user">
+    <div class="avatar" id="nav-avatar">RK</div>
+    <span id="nav-name">Ram Kumar</span>
+    <a href="login-patient.html" class="btn-logout" onclick="sessionStorage.removeItem('patient')"><i class="fa fa-sign-out"></i> Logout</a>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <span class="sidebar-label">Navigation</span>
+    <button class="sidebar-item active" onclick="showTab('dash',this)"><i class="fa fa-th-large"></i> Dashboard</button>
+    <button class="sidebar-item" onclick="showTab('book',this)"><i class="fa fa-calendar-plus-o"></i> Book Appointment</button>
+    <button class="sidebar-item" onclick="showTab('history',this)"><i class="fa fa-history"></i> Appointment History</button>
+    <button class="sidebar-item" onclick="showTab('pres',this)"><i class="fa fa-file-text-o"></i> Prescriptions</button>
+    <button class="sidebar-item" onclick="showTab('store',this)"><i class="fa fa-medkit"></i> Medical Store</button>
+    <button class="sidebar-item" onclick="showTab('ops',this)"><i class="fa fa-stethoscope"></i> My Operations</button>
+    <span class="sidebar-label" style="margin-top:auto">Account</span>
+    <a href="login-patient.html" class="sidebar-item" style="color:#fca5a5" onclick="sessionStorage.removeItem('patient')"><i class="fa fa-sign-out"></i> Sign Out</a>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="welcome-bar">
+      <div class="welcome-text">
+        <h2 id="welcome-msg">Welcome back, Ram! 👋</h2>
+        <p>Here's what's happening with your health today.</p>
+      </div>
+      <i class="fa fa-hospital-o welcome-icon"></i>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div class="tab-pane active" id="tab-dash">
+      <div class="stat-cards">
+        <a class="stat-card" href="#" onclick="showTab('book',document.querySelectorAll('.sidebar-item')[1]);return false">
+          <div class="card-icon purple"><i class="fa fa-calendar-plus-o"></i></div>
+          <div class="card-label">Appointments</div><div class="card-title">Book My Appointment</div>
+          <div class="card-action"><i class="fa fa-arrow-right"></i> Book now</div>
+        </a>
+        <a class="stat-card" href="#" onclick="showTab('history',document.querySelectorAll('.sidebar-item')[2]);return false">
+          <div class="card-icon cyan"><i class="fa fa-history"></i></div>
+          <div class="card-label">History</div><div class="card-title">My Appointments</div>
+          <div class="card-action"><i class="fa fa-arrow-right"></i> View history</div>
+        </a>
+        <a class="stat-card" href="#" onclick="showTab('pres',document.querySelectorAll('.sidebar-item')[3]);return false">
+          <div class="card-icon green"><i class="fa fa-file-text-o"></i></div>
+          <div class="card-label">Records</div><div class="card-title">My Prescriptions</div>
+          <div class="card-action"><i class="fa fa-arrow-right"></i> View records</div>
+        </a>
+        <a class="stat-card" href="#" onclick="showTab('store',document.querySelectorAll('.sidebar-item')[4]);return false">
+          <div class="card-icon" style="background:linear-gradient(135deg,#7c3aed,#a855f7)"><i class="fa fa-medkit"></i></div>
+          <div class="card-label">Pharmacy</div><div class="card-title">Medical Store</div>
+          <div class="card-action"><i class="fa fa-arrow-right"></i> Order medicines</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- BOOK APPOINTMENT TAB -->
+    <div class="tab-pane" id="tab-book">
+      <div class="content-card" style="max-width:620px">
+        <div class="card-header"><div class="header-icon purple"><i class="fa fa-calendar-plus-o"></i></div><h3>Book New Appointment</h3></div>
+        <div class="card-body-inner">
+          <form onsubmit="bookAppointment(event)">
+            <div class="form-row">
+              <div><label class="form-label">First Name</label><input id="f-fname" class="form-inp" readonly></div>
+              <div><label class="form-label">Last Name</label><input id="f-lname" class="form-inp" readonly></div>
+            </div>
+            <div class="form-row">
+              <div><label class="form-label">Gender</label><input id="f-gender" class="form-inp" readonly></div>
+              <div><label class="form-label">Contact</label><input id="f-contact" class="form-inp" readonly></div>
+            </div>
+            <div style="margin-bottom:.85rem">
+              <label class="form-label">Select Doctor</label>
+              <select id="f-doctor" class="form-inp" required onchange="setFees(this)">
+                <option value="" disabled selected>Choose a doctor…</option>
+                <option value="Dr. Rajesh Kumar|General|500">Dr. Rajesh Kumar — General (₹500)</option>
+                <option value="Dr. Meera Kapoor|Dermatologist|800">Dr. Meera Kapoor — Dermatologist (₹800)</option>
+                <option value="Dr. Suresh Iyer|Orthopedic|900">Dr. Suresh Iyer — Orthopedic (₹900)</option>
+                <option value="Dr. Kavita Nair|Neurologist|1200">Dr. Kavita Nair — Neurologist (₹1200)</option>
+                <option value="Dr. Rajan Mehta|Cardiologist|1500">Dr. Rajan Mehta — Cardiologist (₹1500)</option>
+                <option value="Dr. Preethi Rao|Pediatrician|600">Dr. Preethi Rao — Pediatrician (₹600)</option>
+                <option value="Dr. Arjun Das|General|400">Dr. Arjun Das — General (₹400)</option>
+                <option value="Dr. Sunita Sharma|Gynecologist|1000">Dr. Sunita Sharma — Gynecologist (₹1000)</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div><label class="form-label">Date</label><input type="date" id="f-date" class="form-inp" required></div>
+              <div><label class="form-label">Time</label><input type="time" id="f-time" class="form-inp" required></div>
+            </div>
+            <div style="margin-bottom:.85rem">
+              <label class="form-label">Consultation Fees</label>
+              <input id="f-fees" class="form-inp" readonly value="Select a doctor first">
+            </div>
+            <button type="submit" class="btn-submit"><i class="fa fa-calendar-check-o"></i> Confirm Appointment</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY TAB -->
+    <div class="tab-pane" id="tab-history">
+      <div class="content-card">
+        <div class="card-header"><div class="header-icon cyan"><i class="fa fa-history"></i></div><h3>Appointment History</h3></div>
+        <div style="overflow-x:auto"><table class="hms-table" id="hist-table">
+          <thead><tr><th>ID</th><th>Doctor</th><th>Specialization</th><th>Date</th><th>Time</th><th>Fees</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="hist-body"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- PRESCRIPTIONS TAB -->
+    <div class="tab-pane" id="tab-pres">
+      <div class="content-card">
+        <div class="card-header"><div class="header-icon green"><i class="fa fa-file-text-o"></i></div><h3>My Prescriptions</h3></div>
+        <div style="overflow-x:auto"><table class="hms-table">
+          <thead><tr><th>Doctor</th><th>Date</th><th>Disease</th><th>Allergy</th><th>Prescription</th><th>Fees</th></tr></thead>
+          <tbody id="pres-body"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- MEDICAL STORE TAB -->
+    <div class="tab-pane" id="tab-store">
+      <div class="welcome-bar" style="background:linear-gradient(135deg,#7c3aed,#a855f7);margin-bottom:1.5rem">
+        <div class="welcome-text"><h2><i class="fa fa-medkit"></i> &nbsp;Hospital Pharmacy</h2><p>Browse and order medicines. Pick up from pharmacy once confirmed.</p></div>
+      </div>
+      <div class="content-card" style="margin-bottom:1.5rem" id="orders-card" style="display:none">
+        <div class="card-header"><div class="header-icon" style="background:linear-gradient(135deg,#7c3aed,#a855f7)"><i class="fa fa-shopping-cart"></i></div><h3>My Recent Orders</h3></div>
+        <div style="overflow-x:auto"><table class="hms-table"><thead><tr><th>#</th><th>Medicine</th><th>Qty</th><th>Total</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="orders-body"></tbody>
+        </table></div>
+      </div>
+      <div id="store-catalog"></div>
+    </div>
+
+    <!-- OPERATIONS TAB -->
+    <div class="tab-pane" id="tab-ops">
+      <div class="content-card">
+        <div class="card-header"><div class="header-icon" style="background:linear-gradient(135deg,#be185d,#ec4899)"><i class="fa fa-stethoscope"></i></div><h3>My Operations</h3></div>
+        <div style="overflow-x:auto"><table class="hms-table">
+          <thead><tr><th>#</th><th>Operation</th><th>Doctor</th><th>Date</th><th>Time</th><th>Room</th><th>Status</th><th>Notes</th></tr></thead>
+          <tbody id="ops-body"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── Sample Data ─────────────────────────────────────────────────
+const PATIENT_APPOINTMENTS = [
+  {id:25,doctor:'Dr. Meera Kapoor',spec:'Dermatologist',date:'2026-08-19',time:'10:00',fees:800,status:'Active'},
+  {id:1, doctor:'Dr. Rajesh Kumar',spec:'General',date:'2026-08-10',time:'09:30',fees:500,status:'Active'},
+  {id:5, doctor:'Dr. Kavita Nair',spec:'Neurologist',date:'2026-08-05',time:'11:00',fees:1200,status:'Cancelled by You'},
+];
+const PATIENT_PRESCRIPTIONS = [
+  {doctor:'Dr. Meera Kapoor',date:'2026-08-19',disease:'Acne Vulgaris',allergy:'None',prescription:'Clindamycin gel apply at night. Benzoyl peroxide wash morning. Avoid oily food.',fees:800},
+  {doctor:'Dr. Rajesh Kumar',date:'2026-07-15',disease:'Viral Fever',allergy:'None',prescription:'Paracetamol 650mg 3×/day. ORS solution. Complete bed rest for 3 days.',fees:500},
+  {doctor:'Dr. Kavita Nair',date:'2026-06-20',disease:'Migraine',allergy:'Penicillin',prescription:'Sumatriptan 50mg at onset. Paracetamol 500mg for mild pain. Avoid bright lights.',fees:1200},
+];
+const PATIENT_OPS = [
+  {id:11,type:'Spinal Decompression',doctor:'Dr. Kavita Nair',date:'2026-08-15',time:'08:30',room:'OT-1',status:'Completed',notes:'L4-L5 disc herniation. Microdiscectomy performed successfully.'},
+];
+const ALL_MEDICINES = [
+  // Painkiller
+  {id:1,name:'Paracetamol 500mg',cat:'Painkiller',desc:'Fever and pain relief. Safe for all ages when used correctly.',price:2.50,stock:500,unit:'Tablet'},
+  {id:19,name:'Diclofenac 50mg',cat:'Painkiller',desc:'Anti-inflammatory for joint pain, arthritis and muscle soreness.',price:9.00,stock:300,unit:'Tablet'},
+  {id:35,name:'Paracetamol Syrup',cat:'Painkiller',desc:'Liquid paracetamol for children. Fever and pain relief.',price:28.00,stock:100,unit:'Syrup'},
+  // Antibiotic
+  {id:2,name:'Amoxicillin 500mg',cat:'Antibiotic',desc:'Broad-spectrum antibiotic for respiratory, ear and urinary infections.',price:12.00,stock:200,unit:'Capsule'},
+  {id:27,name:'Amoxicillin-Clavulanate 625mg',cat:'Antibiotic',desc:'Augmented antibiotic for severe bacterial infections.',price:55.00,stock:150,unit:'Tablet'},
+  {id:28,name:'Ciprofloxacin 500mg',cat:'Antibiotic',desc:'Fluoroquinolone for UTI, chest and abdominal infections.',price:20.00,stock:200,unit:'Tablet'},
+  // Cardiac
+  {id:5,name:'Atorvastatin 10mg',cat:'Cardiac',desc:'Cholesterol lowering. Take at bedtime for best results.',price:15.00,stock:180,unit:'Tablet'},
+  {id:21,name:'Propranolol 40mg',cat:'Cardiac',desc:'Beta blocker for hypertension, migraine prevention and anxiety.',price:12.00,stock:200,unit:'Tablet'},
+  {id:22,name:'Amlodipine 5mg',cat:'Cardiac',desc:'Calcium channel blocker. Controls high blood pressure.',price:7.50,stock:250,unit:'Tablet'},
+  // Dermatology
+  {id:16,name:'Hydrocortisone Cream 1%',cat:'Dermatology',desc:'Anti-inflammatory cream for eczema, rashes and skin irritation.',price:35.00,stock:120,unit:'Tube'},
+  {id:17,name:'Clindamycin Gel 1%',cat:'Dermatology',desc:'Antibiotic gel for acne vulgaris treatment.',price:85.00,stock:90,unit:'Tube'},
+  // Supplement
+  {id:24,name:'Vitamin C 500mg',cat:'Supplement',desc:'Immune booster. Antioxidant for general health.',price:8.00,stock:400,unit:'Tablet'},
+  {id:25,name:'Vitamin B12 1500mcg',cat:'Supplement',desc:'Essential vitamin for nerve function and red blood cell production.',price:22.00,stock:180,unit:'Tablet'},
+  {id:34,name:'Multivitamin with Minerals',cat:'Supplement',desc:'Complete daily nutrition supplement with 23 vitamins and minerals.',price:32.00,stock:350,unit:'Tablet'},
+  // Antacid
+  {id:4,name:'Omeprazole 20mg',cat:'Antacid',desc:'Proton pump inhibitor for acid reflux and peptic ulcers.',price:6.50,stock:300,unit:'Capsule'},
+  {id:32,name:'Pantoprazole 40mg',cat:'Antacid',desc:'Proton pump inhibitor for GERD, peptic ulcers and acid reflux.',price:9.50,stock:240,unit:'Tablet'},
+];
+const PATIENT_ORDERS = [
+  {id:12,name:'Vitamin C 500mg',qty:30,total:240.00,date:'2026-08-10',status:'Delivered'},
+  {id:7, name:'Diclofenac 50mg', qty:20,total:180.00,date:'2026-08-16',status:'Dispatched'},
+];
+
+// ── Init ─────────────────────────────────────────────────────────
+window.onload = function() {
+  const p = JSON.parse(sessionStorage.getItem('patient') || '{"name":"Ram","lname":"Kumar","pid":1,"gender":"Male","contact":"9876543210"}');
+  document.getElementById('nav-avatar').textContent = (p.name[0]+(p.lname||'')[0]).toUpperCase();
+  document.getElementById('nav-name').textContent = p.name+' '+p.lname;
+  document.getElementById('welcome-msg').textContent = 'Welcome back, '+p.name+'! 👋';
+  document.getElementById('f-fname').value = p.name;
+  document.getElementById('f-lname').value = p.lname;
+  document.getElementById('f-gender').value = p.gender;
+  document.getElementById('f-contact').value = p.contact;
+  // Set min date
+  document.getElementById('f-date').min = new Date().toISOString().split('T')[0];
+  // Render history
+  const hb = document.getElementById('hist-body');
+  PATIENT_APPOINTMENTS.forEach(a => {
+    const sc = a.status==='Active'?'active':'cancelled';
+    hb.innerHTML += `<tr>
+      <td><span style="background:#e0e7ff;color:#4f46e5;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:700">#${a.id}</span></td>
+      <td><strong>${a.doctor}</strong></td><td>${a.spec}</td>
+      <td>${fmtDate(a.date)}</td><td>${fmtTime(a.time)}</td>
+      <td>₹${a.fees}</td>
+      <td><span class="badge-status ${sc}">${a.status}</span></td>
+      <td>${a.status==='Active'?`<button class="btn-sm-danger" onclick="cancelAppt(this,'${a.doctor}')"><i class="fa fa-times"></i> Cancel</button>`:'—'}</td>
+    </tr>`;
+  });
+  // Render prescriptions
+  const pb = document.getElementById('pres-body');
+  PATIENT_PRESCRIPTIONS.forEach(pr => {
+    pb.innerHTML += `<tr>
+      <td><strong>${pr.doctor}</strong></td>
+      <td>${fmtDate(pr.date)}</td>
+      <td><span class="badge-status active">${pr.disease}</span></td>
+      <td style="font-size:.8rem">${pr.allergy}</td>
+      <td style="max-width:220px;white-space:normal;font-size:.8rem">${pr.prescription}</td>
+      <td>₹${pr.fees}</td>
+    </tr>`;
+  });
+  // Render orders
+  const ob = document.getElementById('orders-body');
+  PATIENT_ORDERS.forEach((o,i) => {
+    const sc = o.status==='Delivered'?'active':o.status==='Dispatched'?'active':'pending';
+    ob.innerHTML += `<tr>
+      <td><span style="background:#ede9fe;color:#7c3aed;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:700">#${o.id}</span></td>
+      <td><strong>${o.name}</strong></td><td>${o.qty} units</td>
+      <td><strong>₹${o.total.toFixed(2)}</strong></td><td>${fmtDate(o.date)}</td>
+      <td><span class="badge-status ${sc}">${o.status}</span></td>
+    </tr>`;
+  });
+  document.getElementById('orders-card').style.display = 'block';
+  // Render store
+  renderStore();
+  // Render ops
+  const opsb = document.getElementById('ops-body');
+  PATIENT_OPS.forEach(op => {
+    const sc = op.status==='Completed'?'active':op.status==='Cancelled'?'cancelled':'cancelled-by';
+    opsb.innerHTML += `<tr>
+      <td><span style="background:#fce7f3;color:#be185d;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:700">#${op.id}</span></td>
+      <td><strong>${op.type}</strong></td><td>${op.doctor}</td>
+      <td>${fmtDate(op.date)}</td><td>${fmtTime(op.time)}</td>
+      <td><span style="background:#f1f5f9;padding:2px 8px;border-radius:4px;font-weight:600;font-size:.8rem">${op.room}</span></td>
+      <td><span class="badge-status ${sc}">${op.status}</span></td>
+      <td style="max-width:180px;white-space:normal;font-size:.78rem;color:#475569">${op.notes}</td>
+    </tr>`;
+  });
+};
+
+function renderStore() {
+  const cats = [...new Set(ALL_MEDICINES.map(m=>m.cat))].sort();
+  let html = '';
+  cats.forEach(cat => {
+    const meds = ALL_MEDICINES.filter(m=>m.cat===cat&&m.stock>0);
+    if(!meds.length) return;
+    html += `<div class="content-card" style="margin-bottom:1.25rem">
+      <div class="card-header"><div class="header-icon" style="background:linear-gradient(135deg,#7c3aed,#a855f7)"><i class="fa fa-tag"></i></div><h3>${cat}</h3></div>
+      <div class="med-grid">`;
+    meds.forEach(m => {
+      const stk = m.stock<=20?`<span style="color:#dc2626">⚠ Low: ${m.stock} left</span>`:`<span style="color:#059669">✓ In Stock: ${m.stock} units</span>`;
+      html += `<div class="med-card">
+        <div style="font-size:1.5rem;margin-bottom:.5rem">💊</div>
+        <div style="font-weight:700;color:#1e293b;font-size:.9rem;margin-bottom:.2rem">${m.name}</div>
+        <div style="font-size:.73rem;color:#94a3b8;margin-bottom:.7rem;line-height:1.5">${m.desc.substring(0,70)}…</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:.6rem">
+          <span style="font-size:1.05rem;font-weight:800;color:#7c3aed">₹${m.price.toFixed(2)}</span>
+          <span style="font-size:.73rem;color:#64748b">per ${m.unit}</span>
+        </div>
+        <div style="font-size:.72rem;font-weight:600;margin-bottom:.7rem">${stk}</div>
+        <div style="display:flex;gap:.4rem;align-items:center">
+          <input type="number" id="qty-${m.id}" value="1" min="1" max="${Math.min(m.stock,20)}"
+            style="width:60px;border:1px solid #e2e8f0;border-radius:8px;padding:5px 8px;font-size:.85rem;text-align:center">
+          <button onclick="placeOrder(${m.id},'${m.name}',${m.price})"
+            style="flex:1;padding:.5rem;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">
+            <i class="fa fa-cart-plus"></i> Order
+          </button>
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  document.getElementById('store-catalog').innerHTML = html;
+}
+
+function placeOrder(id, name, price) {
+  const qty = parseInt(document.getElementById('qty-'+id).value)||1;
+  const total = (price*qty).toFixed(2);
+  alert(`✅ Order Placed!\n\nMedicine: ${name}\nQuantity: ${qty} units\nTotal: ₹${total}\n\nStatus: Pending\nPick up from hospital pharmacy once confirmed.`);
+}
+
+function setFees(sel) {
+  const parts = sel.value.split('|');
+  document.getElementById('f-fees').value = '₹'+parts[2]+' ('+parts[1]+')';
+}
+
+function bookAppointment(e) {
+  e.preventDefault();
+  const doc = document.getElementById('f-doctor').value.split('|')[0];
+  const date = document.getElementById('f-date').value;
+  const time = document.getElementById('f-time').value;
+  if(!doc){alert('Please select a doctor.');return;}
+  alert(`✅ Appointment Booked!\n\nDoctor: ${doc}\nDate: ${fmtDate(date)}\nTime: ${fmtTime(time)}\n\nYour appointment is confirmed. Please arrive 15 minutes early.`);
+  e.target.reset();
+  document.getElementById('f-fees').value='Select a doctor first';
+}
+
+function cancelAppt(btn, doctor) {
+  if(confirm(`Cancel appointment with ${doctor}?`)){
+    const row = btn.closest('tr');
+    row.querySelector('.badge-status').className='badge-status cancelled';
+    row.querySelector('.badge-status').textContent='Cancelled by You';
+    btn.parentElement.innerHTML='—';
+  }
+}
+
+function fmtDate(d){const dt=new Date(d);return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtTime(t){const [h,m]=t.split(':');const hh=parseInt(h);return (hh>12?hh-12:hh||12)+':'+m+' '+(hh>=12?'PM':'AM');}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+</script>
+</body>
+</html>

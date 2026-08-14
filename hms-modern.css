@@ -306,6 +306,39 @@ body {
 
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
+/* ── Auth Pages ────────────────────────────────────────────────── */
+.auth-container  { display: flex; min-height: 100vh; font-family: 'Inter', sans-serif; }
+.auth-hero       { flex: 1; background: linear-gradient(135deg, #1e1b4b 0%, #4f46e5 60%, #06b6d4 100%); display: flex; align-items: center; justify-content: center; padding: 3rem; position: relative; overflow: hidden; }
+.auth-hero::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.12) 0%, transparent 60%); }
+.auth-hero-content { position: relative; z-index: 1; max-width: 420px; }
+.auth-logo       { width: 72px; height: 72px; background: rgba(255,255,255,.15); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; margin-bottom: 1.5rem; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.2); }
+.auth-hero-content h1 { font-size: 2.4rem; font-weight: 800; color: white; line-height: 1.15; margin-bottom: .85rem; }
+.auth-hero-content p  { color: rgba(255,255,255,.75); font-size: .95rem; line-height: 1.7; margin-bottom: 2rem; }
+.auth-features   { display: flex; flex-direction: column; gap: .75rem; }
+.auth-feature    { display: flex; align-items: center; gap: .75rem; color: rgba(255,255,255,.85); font-size: .875rem; }
+.auth-feature i  { width: 32px; height: 32px; background: rgba(255,255,255,.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; }
+.auth-card       { width: 480px; display: flex; align-items: center; justify-content: center; background: #f8fafc; padding: 2rem; }
+.auth-card-inner { width: 100%; max-width: 400px; }
+.auth-header     { text-align: center; margin-bottom: 2rem; }
+.auth-icon       { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: white; margin: 0 auto 1rem; background: linear-gradient(135deg, var(--primary), var(--primary-light)); }
+.auth-header h2  { font-size: 1.6rem; font-weight: 800; color: var(--text-dark); margin-bottom: .3rem; }
+.auth-header p   { color: var(--text-muted); font-size: .875rem; }
+.auth-field      { margin-bottom: 1.1rem; }
+.auth-label      { display: block; font-size: .8rem; font-weight: 600; color: var(--text-muted); margin-bottom: .4rem; text-transform: uppercase; letter-spacing: .4px; }
+.auth-input-wrap { position: relative; }
+.auth-input-icon { position: absolute; left: .85rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: .85rem; pointer-events: none; }
+.auth-input      { width: 100%; border: 1.5px solid #e2e8f0; border-radius: var(--radius-md); padding: .7rem 1rem .7rem 2.5rem; font-family: 'Inter', sans-serif; font-size: .9rem; color: var(--text-dark); background: white; outline: none; transition: border-color .2s, box-shadow .2s; }
+.auth-input:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(79,70,229,.12); }
+select.auth-input { padding-left: 2.5rem; cursor: pointer; }
+.auth-btn        { width: 100%; padding: .8rem; border: none; border-radius: var(--radius-md); font-family: 'Inter', sans-serif; font-size: .925rem; font-weight: 700; color: white; cursor: pointer; transition: all .25s; display: flex; align-items: center; justify-content: center; gap: .5rem; box-shadow: 0 4px 14px rgba(79,70,229,.35); margin-top: 1.5rem; }
+.auth-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,70,229,.45); }
+
+/* ── Card icon color variants ──────────────────────────────────── */
+.card-icon.purple { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+.card-icon.cyan   { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+.card-icon.green  { background: linear-gradient(135deg, #059669, #10b981); }
+.card-icon.orange { background: linear-gradient(135deg, #d97706, #f59e0b); }
+
 @media (max-width: 768px) {
   .auth-container { flex-direction: column; }
   .auth-hero { display: none; }
@@ -315,3 +348,4 @@ body {
   .stat-cards { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
 }
+

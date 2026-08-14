@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Global Hospitals — Doctor Dashboard</title>
+  <link rel="stylesheet" href="hms-modern.css">
+  <link rel="stylesheet" href="vendor/fontawesome/css/font-awesome.min.css">
+  <style>
+    .summary-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+    .summary-card{background:white;border-radius:var(--radius-lg);padding:1.25rem;border:1px solid #e2e8f0;box-shadow:0 4px 16px rgba(0,0,0,.06);text-align:center}
+    .s-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;font-size:1.2rem;color:white}
+    .s-number{font-size:2rem;font-weight:800;margin-bottom:.2rem}
+    .s-label{font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+    .form-2{display:grid;grid-template-columns:160px 1fr;gap:.7rem;align-items:center;margin-bottom:.75rem}
+    .form-2 label{font-size:.82rem;font-weight:600;color:var(--text-muted)}
+    .form-2 .fc{border:1px solid #e2e8f0;border-radius:var(--radius-md);padding:.55rem .85rem;font-family:'Inter',sans-serif;font-size:.875rem;background:#f8fafc;outline:none;width:100%}
+    .form-2 .fc:focus{border-color:var(--primary-light);background:white;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+    .med-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:1.25rem}
+    .med-card{border:1px solid #e2e8f0;border-radius:12px;padding:1.25rem;background:#fafafa;transition:all .25s}
+    .med-card:hover{border-color:#059669;background:white;transform:translateY(-2px)}
+  </style>
+</head>
+<body>
+
+<nav class="hms-navbar" style="background:linear-gradient(135deg,#0c4a6e,#164e63)">
+  <a href="index.html" class="brand"><div class="brand-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fa fa-user-md"></i></div>Global Hospitals</a>
+  <div class="nav-user">
+    <div class="avatar" id="nav-avatar" style="background:linear-gradient(135deg,#059669,#10b981)">RK</div>
+    <span id="nav-name">Dr. Rajesh Kumar</span>
+    <a href="login-doctor.html" class="btn-logout" onclick="sessionStorage.removeItem('doctor')"><i class="fa fa-sign-out"></i> Logout</a>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <aside class="sidebar" style="background:linear-gradient(180deg,#0c4a6e,#083344)">
+    <span class="sidebar-label">Navigation</span>
+    <button class="sidebar-item active" onclick="showTab('dash',this)"><i class="fa fa-th-large"></i> Dashboard</button>
+    <button class="sidebar-item" onclick="showTab('apps',this)"><i class="fa fa-calendar"></i> Appointments</button>
+    <button class="sidebar-item" onclick="showTab('pres',this)"><i class="fa fa-file-text-o"></i> Prescriptions</button>
+    <button class="sidebar-item" onclick="showTab('store',this)"><i class="fa fa-medkit"></i> Medical Store</button>
+    <button class="sidebar-item" onclick="showTab('ops',this)"><i class="fa fa-stethoscope"></i> Operations</button>
+    <button class="sidebar-item" onclick="showTab('orders',this)"><i class="fa fa-shopping-cart"></i> My Orders</button>
+    <span class="sidebar-label" style="margin-top:auto">Account</span>
+    <a href="login-doctor.html" class="sidebar-item" style="color:#fca5a5" onclick="sessionStorage.removeItem('doctor')"><i class="fa fa-sign-out"></i> Sign Out</a>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="welcome-bar" style="background:linear-gradient(135deg,#0c4a6e,#0891b2 60%,#06b6d4)">
+      <div class="welcome-text">
+        <h2 id="welcome-msg">Welcome, Dr. Rajesh Kumar! 🩺</h2>
+        <p>Manage your appointments, prescribe medicines, and schedule operations.</p>
+      </div>
+      <i class="fa fa-user-md welcome-icon"></i>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="tab-pane active" id="tab-dash">
+      <div class="summary-cards">
+        <div class="summary-card"><div class="s-icon" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)"><i class="fa fa-calendar-check-o"></i></div><div class="s-number" style="color:#4f46e5" id="stat-apps">0</div><div class="s-label">Active Appointments</div></div>
+        <div class="summary-card"><div class="s-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fa fa-file-text-o"></i></div><div class="s-number" style="color:#059669" id="stat-pres">0</div><div class="s-label">Prescriptions Given</div></div>
+        <div class="summary-card"><div class="s-icon" style="background:linear-gradient(135deg,#be185d,#ec4899)"><i class="fa fa-stethoscope"></i></div><div class="s-number" style="color:#be185d" id="stat-ops">0</div><div class="s-label">Scheduled Operations</div></div>
+        <div class="summary-card"><div class="s-icon" style="background:linear-gradient(135deg,#0891b2,#06b6d4)"><i class="fa fa-shopping-cart"></i></div><div class="s-number" style="color:#0891b2" id="stat-orders">0</div><div class="s-label">Medicine Orders</div></div>
+      </div>
+      <div class="stat-cards" style="grid-template-columns:repeat(3,1fr)">
+        <a class="stat-card" href="#" onclick="showTab('apps',document.querySelectorAll('.sidebar-item')[1]);return false"><div class="card-icon purple"><i class="fa fa-calendar"></i></div><div class="card-label">My</div><div class="card-title">Appointments</div><div class="card-action"><i class="fa fa-arrow-right"></i> View</div></a>
+        <a class="stat-card" href="#" onclick="showTab('store',document.querySelectorAll('.sidebar-item')[3]);return false"><div class="card-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fa fa-medkit"></i></div><div class="card-label">Hospital</div><div class="card-title">Medical Store</div><div class="card-action"><i class="fa fa-arrow-right"></i> Browse</div></a>
+        <a class="stat-card" href="#" onclick="showTab('ops',document.querySelectorAll('.sidebar-item')[4]);return false"><div class="card-icon" style="background:linear-gradient(135deg,#be185d,#ec4899)"><i class="fa fa-stethoscope"></i></div><div class="card-label">Schedule</div><div class="card-title">Operations</div><div class="card-action"><i class="fa fa-arrow-right"></i> Manage</div></a>
+      </div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div class="tab-pane" id="tab-apps">
+      <div class="content-card">
+        <div class="card-header"><div class="header-icon" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)"><i class="fa fa-calendar"></i></div><h3 id="apps-title">My Appointments</h3></div>
+        <div style="overflow-x:auto"><table class="hms-table"><thead><tr><th>ID</th><th>Patient</th><th>Gender</th><th>Date</th><th>Time</th><th>Fees</th><th>Status</th><th>Prescribe</th></tr></thead>
+          <tbody id="apps-body"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- PRESCRIPTIONS -->
+    <div class="tab-pane" id="tab-pres">
+      <div class="content-card" style="margin-bottom:1.5rem">
+        <div class="card-header"><div class="header-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fa fa-plus"></i></div><h3>Write New Prescription</h3></div>
+        <div class="card-body-inner">
+          <form onsubmit="writePrescription(event)">
+            <div class="form-2"><label>Appointment ID</label><input type="number" class="fc" id="p-id" placeholder="e.g. 25" required></div>
+            <div class="form-2"><label>Patient Name</label><input type="text" class="fc" id="p-patient" placeholder="Patient full name" required></div>
+            <div class="form-2"><label>Disease / Diagnosis</label><input type="text" class="fc" id="p-disease" placeholder="e.g. Viral Fever" required></div>
+            <div class="form-2"><label>Known Allergies</label><input type="text" class="fc" id="p-allergy" placeholder="None / Penicillin..." value="None"></div>
+            <div class="form-2"><label>Prescription</label><textarea class="fc" id="p-pres" rows="3" placeholder="Medicine names, dosage, instructions..." required></textarea></div>
+            <div style="margin-top:1rem"><button type="submit" class="btn-submit" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fa fa-save"></i> Save Prescription</button></div>
+          </form>
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="card-header"><div class="header-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fa fa-list"></i></div><h3 id="pres-title">My Prescriptions</h3></div>
+        <div style="overflow-x:auto"><table class="hms-table"><thead><tr><th>Patient</th><th>Date</th><th>Disease</th><th>Allergy</th><th>Prescription</th></tr></thead>
+          <tbody id="pres-body"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- MEDICAL STORE -->
+    <div class="tab-pane" id="tab-store">
+      <div class="welcome-bar" style="background:linear-gradient(135deg,#064e3b,#059669);margin-bottom:1.5rem">
+        <div class="welcome-text"><h2><i class="fa fa-medkit"></i> &nbsp;Hospital Pharmacy</h2><p>Browse and order medicines for patient treatment.</p></div>
+      </div>
+      <div id="store-catalog"></div>
+    </div>
+
+    <!-- OPERATIONS -->
+    <div class="tab-pane" id="tab-ops">
+      <div class="content-card" style="margin-bottom:1.5rem">
+        <div class="card-header"><div class="header-icon" style="background:linear-gradient(135deg,#be185d,#ec4899)"><i class="fa fa-plus"></i></div><h3>Schedule New Operation</h3></div>
+        <div class="card-body-inner">
+          <form onsubmit="scheduleOp(event)">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem 2rem">
+              <div class="form-2"><label>Patient ID</label><input type="number" class="fc" id="op-pid" placeholder="e.g. 15" required></div>
+              <div class="form-2"><label>Patient Name</label><input type="text" class="fc" id="op-pname" placeholder="Full name" required></div>
+              <div class="form-2"><label>Operation Type</label><input type="text" class="fc" id="op-type" placeholder="e.g. Hip Replacement" required></div>
+              <div class="form-2"><label>OT Room</label>
+                <select class="fc" id="op-room">
+                  <option>OT-1</option><option>OT-2</option><option>OT-3</option><option>OT-4</option>
+                </select>
+              </div>
+              <div class="form-2"><label>Date</label><input type="date" class="fc" id="op-date" required></div>
+              <div class="form-2"><label>Time</label><input type="time" class="fc" id="op-time" required></div>
+              <div class="form-2" style="grid-column:span 2"><label>Notes</label><textarea class="fc" id="op-notes" rows="2" placeholder="Pre-op instructions, patient condition..."></textarea></div>
+            </div>
+            <div style="margin-top:1rem"><button type="submit" class="btn-submit" style="background:linear-gradient(135deg,#be185d,#ec4899)"><i class="fa fa-calendar-plus-o"></i> Schedule Operation</button></div>
+          </form>
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="card-header"><div class="header-icon" style="background:linear-gradient(135deg,#be185d,#ec4899)"><i class="fa fa-list"></i></div><h3 id="ops-title">My Operations</h3></div>
+        <div style="overflow-x:auto"><table class="hms-table"><thead><tr><th>#</th><th>Patient</th><th>Operation</th><th>Date & Time</th><th>Room</th><th>Status</th><th>Notes</th></tr></thead>
+          <tbody id="ops-body"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- MY ORDERS -->
+    <div class="tab-pane" id="tab-orders">
+      <div class="content-card">
+        <div class="card-header"><div class="header-icon" style="background:linear-gradient(135deg,#0891b2,#06b6d4)"><i class="fa fa-shopping-cart"></i></div><h3 id="orders-title">My Medicine Orders</h3></div>
+        <div style="overflow-x:auto"><table class="hms-table"><thead><tr><th>#</th><th>Medicine</th><th>Qty</th><th>Total</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="orders-body"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const ALL_APPOINTMENTS = {
+  'Dr. Rajesh Kumar': [
+    {id:1,patient:'Ram Kumar',gender:'Male',date:'2026-08-10',time:'09:30',fees:500,status:'Active'},
+    {id:5,patient:'Priya Sharma',gender:'Female',date:'2026-08-12',time:'11:00',fees:500,status:'Active'},
+    {id:9,patient:'Rahul Verma',gender:'Male',date:'2026-08-15',time:'14:00',fees:500,status:'Active'},
+  ],
+  'Dr. Meera Kapoor': [
+    {id:15,patient:'Vikram Patel',gender:'Male',date:'2026-08-16',time:'09:00',fees:800,status:'Active'},
+    {id:25,patient:'Ram Kumar',gender:'Male',date:'2026-08-19',time:'10:00',fees:800,status:'Active'},
+  ],
+  'Dr. Kavita Nair': [
+    {id:21,patient:'Aryan Mehta',gender:'Male',date:'2026-08-17',time:'11:00',fees:1200,status:'Active'},
+    {id:26,patient:'Priya Sharma',gender:'Female',date:'2026-08-20',time:'11:00',fees:1200,status:'Active'},
+  ],
+  'Dr. Rajan Mehta': [
+    {id:22,patient:'Divya Kumar',gender:'Female',date:'2026-08-17',time:'12:00',fees:1500,status:'Active'},
+    {id:28,patient:'Anjali Singh',gender:'Female',date:'2026-08-22',time:'15:00',fees:1500,status:'Active'},
+  ],
+};
+const ALL_PRESCRIPTIONS = {
+  'Dr. Rajesh Kumar': [
+    {patient:'Ram Kumar',date:'2026-07-15',disease:'Viral Fever',allergy:'None',pres:'Paracetamol 650mg 3×/day. ORS solution. Complete bed rest for 3 days.'},
+    {patient:'Priya Sharma',date:'2026-07-20',disease:'Common Cold',allergy:'None',pres:'Cetirizine 10mg at night. Steam inhalation twice daily. Vitamin C 500mg daily.'},
+  ],
+  'Dr. Meera Kapoor': [
+    {patient:'Vikram Patel',date:'2026-08-16',disease:'Eczema',allergy:'None',pres:'Hydrocortisone cream 1% apply twice daily. Avoid hot water baths.'},
+    {patient:'Ram Kumar',date:'2026-08-19',disease:'Acne Vulgaris',allergy:'None',pres:'Clindamycin gel apply at night. Benzoyl peroxide wash morning.'},
+  ],
+  'Dr. Kavita Nair': [
+    {patient:'Aryan Mehta',date:'2026-08-17',disease:'Migraine',allergy:'Penicillin',pres:'Sumatriptan 50mg at onset. Paracetamol 500mg for mild pain.'},
+    {patient:'Priya Sharma',date:'2026-08-20',disease:'Chronic Headache',allergy:'None',pres:'Propranolol 40mg twice daily. Ibuprofen 400mg for acute attack.'},
+  ],
+};
+const ALL_OPS = {
+  'Dr. Kavita Nair': [
+    {id:6,patient:'Sneha Joshi',type:'Brain Tumor Removal',date:'2026-08-28',time:'08:00',room:'OT-1',status:'Scheduled',notes:'MRI confirmed 2cm tumor in left temporal lobe.'},
+    {id:11,patient:'Ram Kumar',type:'Spinal Decompression',date:'2026-08-15',time:'08:30',room:'OT-1',status:'Completed',notes:'L4-L5 disc herniation. Microdiscectomy performed successfully.'},
+  ],
+  'Dr. Rajan Mehta': [
+    {id:7,patient:'Aryan Mehta',type:'Coronary Bypass',date:'2026-08-30',time:'07:30',room:'OT-3',status:'Scheduled',notes:'3-vessel disease confirmed on angiography.'},
+  ],
+  'Dr. Meera Kapoor': [
+    {id:12,patient:'Priya Sharma',type:'Skin Graft',date:'2026-08-16',time:'12:00',room:'OT-2',status:'Completed',notes:'Split-thickness skin graft for burn injury.'},
+  ],
+};
+const ALL_ORDERS = {
+  'Dr. Meera Kapoor': [
+    {id:16,med:'Clindamycin Gel 1%',qty:10,total:850.00,date:'2026-08-16',status:'Confirmed'},
+  ],
+  'Dr. Kavita Nair': [
+    {id:18,med:'Sumatriptan 50mg',qty:20,total:1700.00,date:'2026-08-17',status:'Confirmed'},
+  ],
+  'Dr. Rajan Mehta': [
+    {id:19,med:'Propranolol 40mg',qty:40,total:480.00,date:'2026-08-17',status:'Dispatched'},
+  ],
+};
+const MEDICINES = [
+  {id:1,name:'Paracetamol 500mg',cat:'Painkiller',desc:'Fever and pain relief. Safe for all ages.',price:2.50,stock:500,unit:'Tablet'},
+  {id:2,name:'Amoxicillin 500mg',cat:'Antibiotic',desc:'Broad-spectrum antibiotic for bacterial infections.',price:12.00,stock:200,unit:'Capsule'},
+  {id:19,name:'Diclofenac 50mg',cat:'Painkiller',desc:'Anti-inflammatory for joint pain and arthritis.',price:9.00,stock:300,unit:'Tablet'},
+  {id:20,name:'Sumatriptan 50mg',cat:'Neurology',desc:'Migraine-specific treatment. Best taken at onset.',price:85.00,stock:80,unit:'Tablet'},
+  {id:21,name:'Propranolol 40mg',cat:'Cardiac',desc:'Beta blocker for hypertension and migraine prevention.',price:12.00,stock:200,unit:'Tablet'},
+  {id:22,name:'Amlodipine 5mg',cat:'Cardiac',desc:'Calcium channel blocker. Controls blood pressure.',price:7.50,stock:250,unit:'Tablet'},
+  {id:17,name:'Clindamycin Gel 1%',cat:'Dermatology',desc:'Antibiotic gel for acne vulgaris treatment.',price:85.00,stock:90,unit:'Tube'},
+  {id:23,name:'ORS Sachet',cat:'Supplement',desc:'Oral rehydration salts for dehydration.',price:5.00,stock:500,unit:'Sachet'},
+  {id:24,name:'Vitamin C 500mg',cat:'Supplement',desc:'Immune booster and antioxidant supplement.',price:8.00,stock:400,unit:'Tablet'},
+];
+
+window.onload = function() {
+  const docData = JSON.parse(sessionStorage.getItem('doctor')||'{"name":"Dr. Rajesh Kumar"}');
+  const docName = docData.name;
+  document.getElementById('nav-avatar').textContent = docName.replace('Dr. ','').split(' ').map(w=>w[0]).join('').substring(0,2);
+  document.getElementById('nav-name').textContent = docName;
+  document.getElementById('welcome-msg').textContent = 'Welcome, '+docName+'! 🩺';
+
+  const apps = ALL_APPOINTMENTS[docName] || ALL_APPOINTMENTS['Dr. Rajesh Kumar'];
+  const pres = ALL_PRESCRIPTIONS[docName] || ALL_PRESCRIPTIONS['Dr. Rajesh Kumar'];
+  const ops  = ALL_OPS[docName] || [];
+  const ords = ALL_ORDERS[docName] || [];
+
+  document.getElementById('stat-apps').textContent = apps.filter(a=>a.status==='Active').length;
+  document.getElementById('stat-pres').textContent = pres.length;
+  document.getElementById('stat-ops').textContent = ops.filter(o=>o.status==='Scheduled').length;
+  document.getElementById('stat-orders').textContent = ords.length;
+
+  // Appointments
+  const ab = document.getElementById('apps-body');
+  apps.forEach(a => {
+    ab.innerHTML += `<tr>
+      <td><span style="background:#e0e7ff;color:#4f46e5;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:700">#${a.id}</span></td>
+      <td><strong>${a.patient}</strong></td><td>${a.gender}</td>
+      <td>${fmtDate(a.date)}</td><td>${fmtTime(a.time)}</td>
+      <td>₹${a.fees}</td>
+      <td><span class="badge-status active">${a.status}</span></td>
+      <td><button class="btn-sm-primary" onclick="showTab('pres',document.querySelectorAll('.sidebar-item')[2])"><i class="fa fa-file-text-o"></i> Prescribe</button></td>
+    </tr>`;
+  });
+
+  // Prescriptions
+  const pb = document.getElementById('pres-body');
+  pres.forEach(p => {
+    pb.innerHTML += `<tr>
+      <td><strong>${p.patient}</strong></td>
+      <td>${fmtDate(p.date)}</td>
+      <td><span class="badge-status active">${p.disease}</span></td>
+      <td style="font-size:.8rem">${p.allergy}</td>
+      <td style="max-width:220px;white-space:normal;font-size:.8rem">${p.pres}</td>
+    </tr>`;
+  });
+
+  // Store
+  let storeHtml = '';
+  const cats = [...new Set(MEDICINES.map(m=>m.cat))].sort();
+  cats.forEach(cat => {
+    const meds = MEDICINES.filter(m=>m.cat===cat);
+    storeHtml += `<div class="content-card" style="margin-bottom:1.25rem">
+      <div class="card-header"><div class="header-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fa fa-tag"></i></div><h3>${cat}</h3></div>
+      <div class="med-grid">`;
+    meds.forEach(m => {
+      storeHtml += `<div class="med-card">
+        <div style="font-size:1.5rem;margin-bottom:.5rem">💊</div>
+        <div style="font-weight:700;color:#1e293b;font-size:.9rem;margin-bottom:.2rem">${m.name}</div>
+        <div style="font-size:.73rem;color:#94a3b8;margin-bottom:.7rem;line-height:1.5">${m.desc}</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:.6rem">
+          <span style="font-size:1.05rem;font-weight:800;color:#059669">₹${m.price.toFixed(2)}</span>
+          <span style="font-size:.73rem;color:#64748b">per ${m.unit}</span>
+        </div>
+        <div style="font-size:.72rem;color:#059669;margin-bottom:.7rem;font-weight:600">✓ Stock: ${m.stock} units</div>
+        <div style="display:flex;gap:.4rem;align-items:center">
+          <input type="number" id="qty-${m.id}" value="1" min="1" max="20"
+            style="width:60px;border:1px solid #e2e8f0;border-radius:8px;padding:5px 8px;font-size:.85rem;text-align:center">
+          <button onclick="placeOrder(${m.id},'${m.name}',${m.price},'${docName}')"
+            style="flex:1;padding:.5rem;background:linear-gradient(135deg,#059669,#10b981);color:white;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">
+            <i class="fa fa-cart-plus"></i> Order
+          </button>
+        </div>
+      </div>`;
+    });
+    storeHtml += `</div></div>`;
+  });
+  document.getElementById('store-catalog').innerHTML = storeHtml;
+
+  // Operations
+  const opsb = document.getElementById('ops-body');
+  if(ops.length===0) {
+    opsb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:#94a3b8"><i class="fa fa-check-circle" style="font-size:2rem;display:block;margin-bottom:.5rem;color:#10b981"></i>No operations scheduled yet.</td></tr>';
+  } else {
+    ops.forEach(op => {
+      const sc = op.status==='Completed'?'active':op.status==='Cancelled'?'cancelled':'cancelled-by';
+      opsb.innerHTML += `<tr>
+        <td><span style="background:#fce7f3;color:#be185d;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:700">#${op.id}</span></td>
+        <td><strong>${op.patient}</strong></td>
+        <td><strong>${op.type}</strong></td>
+        <td>${fmtDate(op.date)}<br><small>${fmtTime(op.time)}</small></td>
+        <td><span style="background:#f1f5f9;padding:2px 8px;border-radius:4px;font-weight:600;font-size:.8rem">${op.room}</span></td>
+        <td><span class="badge-status ${sc}">${op.status}</span></td>
+        <td style="max-width:180px;white-space:normal;font-size:.78rem;color:#475569">${op.notes}</td>
+      </tr>`;
+    });
+  }
+
+  // Orders
+  const ob = document.getElementById('orders-body');
+  if(ords.length===0) {
+    ob.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:#94a3b8">No orders placed yet.</td></tr>';
+  } else {
+    ords.forEach(o => {
+      const sc = o.status==='Delivered'?'active':o.status==='Dispatched'?'active':'pending';
+      ob.innerHTML += `<tr>
+        <td><span style="background:#e0f2fe;color:#0891b2;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:700">#${o.id}</span></td>
+        <td><strong>${o.med}</strong></td><td>${o.qty} units</td>
+        <td><strong>₹${o.total.toFixed(2)}</strong></td>
+        <td>${fmtDate(o.date)}</td>
+        <td><span class="badge-status ${sc}">${o.status}</span></td>
+      </tr>`;
+    });
+  }
+};
+
+function placeOrder(id, name, price, docName) {
+  const qty = parseInt(document.getElementById('qty-'+id).value)||1;
+  const total = (price*qty).toFixed(2);
+  alert(`✅ Order Placed!\n\nMedicine: ${name}\nQuantity: ${qty} units\nTotal: ₹${total}\nOrdered by: ${docName}\n\nStatus: Pending — Will be processed shortly.`);
+}
+
+function writePrescription(e) {
+  e.preventDefault();
+  const patient = document.getElementById('p-patient').value;
+  const disease = document.getElementById('p-disease').value;
+  alert(`✅ Prescription Saved!\n\nPatient: ${patient}\nDiagnosis: ${disease}\n\nPrescription has been recorded successfully.`);
+  e.target.reset();
+  document.getElementById('p-allergy').value='None';
+}
+
+function scheduleOp(e) {
+  e.preventDefault();
+  const type = document.getElementById('op-type').value;
+  const patient = document.getElementById('op-pname').value;
+  const date = document.getElementById('op-date').value;
+  const room = document.getElementById('op-room').value;
+  alert(`✅ Operation Scheduled!\n\nOperation: ${type}\nPatient: ${patient}\nDate: ${fmtDate(date)}\nRoom: ${room}\n\nOperation team has been notified.`);
+  e.target.reset();
+}
+
+function fmtDate(d){const dt=new Date(d);return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtTime(t){const[h,m]=t.split(':');const hh=parseInt(h);return(hh>12?hh-12:hh||12)+':'+m+' '+(hh>=12?'PM':'AM');}
+function showTab(id,btn){
+  document.querySelectorAll('.tab-pane').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+</script>
+</body>
+</html>

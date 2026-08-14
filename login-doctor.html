@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Global Hospitals — Doctor Login</title>
+  <link rel="stylesheet" href="hms-modern.css">
+  <link rel="stylesheet" href="vendor/fontawesome/css/font-awesome.min.css">
+</head>
+<body>
+<div class="auth-container">
+  <div class="auth-hero" style="background:linear-gradient(135deg,#064e3b,#059669 60%,#10b981)">
+    <div class="auth-hero-content">
+      <div class="auth-logo"><i class="fa fa-user-md"></i></div>
+      <h1>Doctor Panel</h1>
+      <p>Manage your patients, write prescriptions, schedule operations, and order medicines.</p>
+      <div class="auth-features">
+        <div class="auth-feature"><i class="fa fa-calendar"></i><span>View your appointments</span></div>
+        <div class="auth-feature"><i class="fa fa-file-text-o"></i><span>Write prescriptions</span></div>
+        <div class="auth-feature"><i class="fa fa-stethoscope"></i><span>Schedule operations</span></div>
+        <div class="auth-feature"><i class="fa fa-medkit"></i><span>Order medicines</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-card">
+    <div class="auth-card-inner">
+      <div class="auth-header">
+        <div class="auth-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fa fa-user-md"></i></div>
+        <h2>Doctor Login</h2>
+        <p>Sign in to your doctor account</p>
+      </div>
+      <div id="error-msg" style="display:none;background:#fee2e2;color:#dc2626;padding:.75rem 1rem;border-radius:10px;font-size:.85rem;margin-bottom:1rem;border-left:4px solid #dc2626"></div>
+      <div class="demo-box" style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:.75rem 1rem;margin-bottom:1.25rem;font-size:.82rem;color:#064e3b">
+        <strong>Demo Credentials:</strong><br>
+        Name: <code>Dr. Rajesh Kumar</code> &nbsp; Password: <code>doctor123</code>
+      </div>
+      <form id="login-form" onsubmit="doLogin(event)">
+        <div class="auth-field">
+          <label class="auth-label">Doctor Name</label>
+          <div class="auth-input-wrap">
+            <i class="fa fa-user-md auth-input-icon"></i>
+            <select id="docname" class="auth-input" required>
+              <option value="" disabled>Select your name</option>
+              <option value="Dr. Rajesh Kumar" selected>Dr. Rajesh Kumar</option>
+              <option value="Dr. Meera Kapoor">Dr. Meera Kapoor</option>
+              <option value="Dr. Suresh Iyer">Dr. Suresh Iyer</option>
+              <option value="Dr. Kavita Nair">Dr. Kavita Nair</option>
+              <option value="Dr. Rajan Mehta">Dr. Rajan Mehta</option>
+              <option value="Dr. Preethi Rao">Dr. Preethi Rao</option>
+              <option value="Dr. Arjun Das">Dr. Arjun Das</option>
+              <option value="Dr. Sunita Sharma">Dr. Sunita Sharma</option>
+            </select>
+          </div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Password</label>
+          <div class="auth-input-wrap">
+            <i class="fa fa-lock auth-input-icon"></i>
+            <input type="password" id="password" class="auth-input" placeholder="••••••••" value="doctor123" required>
+          </div>
+        </div>
+        <button type="submit" class="auth-btn" style="background:linear-gradient(135deg,#059669,#10b981)">
+          <i class="fa fa-sign-in"></i> Sign In as Doctor
+        </button>
+      </form>
+      <div style="text-align:center;margin-top:1.5rem">
+        <a href="index.html" style="color:#64748b;font-size:.82rem;text-decoration:none"><i class="fa fa-arrow-left"></i> Back to Home</a>
+        &nbsp;|&nbsp;
+        <a href="login-patient.html" style="color:#4f46e5;font-size:.82rem;text-decoration:none">Patient Login</a>
+        &nbsp;|&nbsp;
+        <a href="login-admin.html" style="color:#0891b2;font-size:.82rem;text-decoration:none">Admin Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const DOCTORS = {
+    'Dr. Rajesh Kumar':'doctor123','Dr. Meera Kapoor':'doctor123','Dr. Suresh Iyer':'doctor123',
+    'Dr. Kavita Nair':'doctor123','Dr. Rajan Mehta':'doctor123','Dr. Preethi Rao':'doctor123',
+    'Dr. Arjun Das':'doctor123','Dr. Sunita Sharma':'doctor123'
+  };
+  function doLogin(e) {
+    e.preventDefault();
+    const name=document.getElementById('docname').value;
+    const pwd=document.getElementById('password').value.trim();
+    if(DOCTORS[name]===pwd){
+      sessionStorage.setItem('doctor',JSON.stringify({name}));
+      window.location.href='dashboard-doctor.html';
+    } else {
+      const err=document.getElementById('error-msg');
+      err.style.display='block';
+      err.textContent='Invalid credentials. Password is: doctor123';
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Global Hospitals — Patient Login</title>
+  <link rel="stylesheet" href="hms-modern.css">
+  <link rel="stylesheet" href="vendor/fontawesome/css/font-awesome.min.css">
+</head>
+<body>
+<div class="auth-container">
+  <div class="auth-hero">
+    <div class="auth-hero-content">
+      <div class="auth-logo"><i class="fa fa-heartbeat"></i></div>
+      <h1>Patient Portal</h1>
+      <p>Access your appointments, prescriptions, medical store and health records securely.</p>
+      <div class="auth-features">
+        <div class="auth-feature"><i class="fa fa-calendar-check-o"></i><span>Book & manage appointments</span></div>
+        <div class="auth-feature"><i class="fa fa-file-text-o"></i><span>View prescriptions & bills</span></div>
+        <div class="auth-feature"><i class="fa fa-medkit"></i><span>Order medicines online</span></div>
+        <div class="auth-feature"><i class="fa fa-stethoscope"></i><span>Track your operations</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-card">
+    <div class="auth-card-inner">
+      <div class="auth-header">
+        <div class="auth-icon" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)"><i class="fa fa-user"></i></div>
+        <h2>Patient Login</h2>
+        <p>Sign in to your patient account</p>
+      </div>
+      <div id="error-msg" style="display:none;background:#fee2e2;color:#dc2626;padding:.75rem 1rem;border-radius:10px;font-size:.85rem;margin-bottom:1rem;border-left:4px solid #dc2626"></div>
+      <div class="demo-box" style="background:#ede9fe;border:1px solid #c4b5fd;border-radius:10px;padding:.75rem 1rem;margin-bottom:1.25rem;font-size:.82rem;color:#5b21b6">
+        <strong>Demo Credentials:</strong><br>
+        Email: <code>ram@gmail.com</code> &nbsp; Password: <code>ram123</code>
+      </div>
+      <form id="login-form" onsubmit="doLogin(event)">
+        <div class="auth-field">
+          <label class="auth-label">Email Address</label>
+          <div class="auth-input-wrap">
+            <i class="fa fa-envelope-o auth-input-icon"></i>
+            <input type="email" id="email" class="auth-input" placeholder="you@example.com" value="ram@gmail.com" required>
+          </div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Password</label>
+          <div class="auth-input-wrap">
+            <i class="fa fa-lock auth-input-icon"></i>
+            <input type="password" id="password" class="auth-input" placeholder="••••••••" value="ram123" required>
+          </div>
+        </div>
+        <button type="submit" class="auth-btn" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)">
+          <i class="fa fa-sign-in"></i> Sign In as Patient
+        </button>
+      </form>
+      <div style="text-align:center;margin-top:1.5rem">
+        <a href="index.html" style="color:#64748b;font-size:.82rem;text-decoration:none"><i class="fa fa-arrow-left"></i> Back to Home</a>
+        &nbsp;|&nbsp;
+        <a href="login-admin.html" style="color:#0891b2;font-size:.82rem;text-decoration:none">Admin Login</a>
+        &nbsp;|&nbsp;
+        <a href="login-doctor.html" style="color:#059669;font-size:.82rem;text-decoration:none">Doctor Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const PATIENTS = [
+    {email:'ram@gmail.com',password:'ram123',name:'Ram',lname:'Kumar',pid:1,gender:'Male',contact:'9876543210'},
+    {email:'priya@gmail.com',password:'priya123',name:'Priya',lname:'Sharma',pid:12,gender:'Female',contact:'9876512345'},
+    {email:'vikram.patel@gmail.com',password:'vikram123',name:'Vikram',lname:'Patel',pid:15,gender:'Male',contact:'9988776655'},
+    {email:'sneha.joshi@gmail.com',password:'sneha123',name:'Sneha',lname:'Joshi',pid:16,gender:'Female',contact:'8877665544'},
+  ];
+  function doLogin(e) {
+    e.preventDefault();
+    const email=document.getElementById('email').value.trim();
+    const pwd=document.getElementById('password').value.trim();
+    const user=PATIENTS.find(p=>p.email===email && p.password===pwd);
+    if(user){
+      sessionStorage.setItem('patient',JSON.stringify(user));
+      window.location.href='dashboard-patient.html';
+    } else {
+      const err=document.getElementById('error-msg');
+      err.style.display='block';
+      err.textContent='Invalid email or password. Try: ram@gmail.com / ram123';
+    }
+  }
+</script>
+</body>
+</html>
